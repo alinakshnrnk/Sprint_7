@@ -3,7 +3,7 @@ import random
 import string
 import allure
 
-BASE_URL = 'https://qa-scooter.praktikum-services.ru/api/v1'
+from urls import COURIER_URL, COURIER_LOGIN_URL
 
 
 def generate_random_string(length):
@@ -11,23 +11,25 @@ def generate_random_string(length):
     return ''.join(random.choice(letters) for i in range(length))
 
 
+def generate_courier_payload():
+    """Генерирует словарь с данными нового курьера."""
+    return {
+        "login": generate_random_string(10),
+        "password": generate_random_string(10),
+        "firstName": generate_random_string(10),
+    }
+
+
 @allure.step('Регистрируем нового курьера')
 def register_new_courier_and_return_login_password():
     """Регистрирует нового курьера. Возвращает [login, password, firstName] или []."""
     login_pass = []
-    login = generate_random_string(10)
-    password = generate_random_string(10)
-    first_name = generate_random_string(10)
-    payload = {
-        "login": login,
-        "password": password,
-        "firstName": first_name,
-    }
-    response = requests.post(f'{BASE_URL}/courier', data=payload)
+    payload = generate_courier_payload()
+    response = requests.post(COURIER_URL, data=payload)
     if response.status_code == 201:
-        login_pass.append(login)
-        login_pass.append(password)
-        login_pass.append(first_name)
+        login_pass.append(payload["login"])
+        login_pass.append(payload["password"])
+        login_pass.append(payload["firstName"])
     return login_pass
 
 
@@ -35,10 +37,10 @@ def register_new_courier_and_return_login_password():
 def login_courier(login, password):
     """Выполняет логин курьера. Возвращает объект response."""
     payload = {"login": login, "password": password}
-    return requests.post(f'{BASE_URL}/courier/login', data=payload)
+    return requests.post(COURIER_LOGIN_URL, data=payload)
 
 
 @allure.step('Удаляем курьера с id {courier_id}')
 def delete_courier(courier_id):
     """Удаляет курьера по id."""
-    requests.delete(f'{BASE_URL}/courier/{courier_id}')
+    requests.delete(f'{COURIER_URL}/{courier_id}')

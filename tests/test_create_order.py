@@ -1,19 +1,8 @@
 import requests
 import allure
 import pytest
-from helpers.courier_helpers import BASE_URL
-
-
-ORDER_BASE_PAYLOAD = {
-    "firstName": "Naruto",
-    "lastName": "Uchiha",
-    "address": "Konoha, 142 apt.",
-    "metroStation": 4,
-    "phone": "+7 800 355 35 35",
-    "rentTime": 5,
-    "deliveryDate": "2020-06-06",
-    "comment": "Saske, come back to Konoha",
-}
+from payloads import ORDER_BASE_PAYLOAD
+from urls import ORDERS_URL
 
 
 @allure.feature('Создание заказа')
@@ -29,7 +18,7 @@ class TestCreateOrder:
     def test_create_order_with_color_options(self, color):
         with allure.step(f'Отправляем POST /orders с color={color}'):
             payload = {**ORDER_BASE_PAYLOAD, "color": color}
-            response = requests.post(f'{BASE_URL}/orders', json=payload)
+            response = requests.post(ORDERS_URL, json=payload)
 
         with allure.step('Проверяем код ответа 201'):
             assert response.status_code == 201

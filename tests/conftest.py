@@ -9,17 +9,21 @@ from helpers.courier_helpers import (
 @pytest.fixture
 def new_courier():
     """
-    Регистрирует курьера перед тестом и удаляет его после.
-    Возвращает словарь {'login': ..., 'password': ..., 'firstName': ...}.
+    Регистрирует курьера и логинится, чтобы получить id.
+    Удаляет курьера после теста.
     """
     creds = register_new_courier_and_return_login_password()
-    assert creds, "Не удалось зарегистрировать курьера"
     login, password, first_name = creds
+    courier_id = login_courier(login, password).json().get("id")
 
-    yield {"login": login, "password": password, "firstName": first_name}
+    yield {"login": login, "password": password, "firstName": first_name, "id": courier_id}
 
-    response = login_courier(login, password)
-    if response.status_code == 200:
-        courier_id = response.json().get("id")
-        if courier_id:
-            delete_courier(courier_id)
+    delete_courier(courier_id)
+
+
+@pytest.fixture
+def registered_courier_id(new_courier):
+    """
+    Возвращает id уже зарегистрированного курьера.
+    """
+    return new_courier["id"]

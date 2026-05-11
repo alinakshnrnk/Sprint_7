@@ -1,10 +1,10 @@
 import requests
 import allure
 from helpers.courier_helpers import (
-    BASE_URL,
     generate_random_string,
     login_courier,
 )
+from urls import COURIER_LOGIN_URL
 
 
 @allure.feature('Логин курьера')
@@ -31,7 +31,7 @@ class TestCourierLogin:
     def test_login_without_login_field_returns_400(self):
         with allure.step('Отправляем запрос без поля login'):
             payload = {"password": generate_random_string(10)}
-            response = requests.post(f'{BASE_URL}/courier/login', data=payload)
+            response = requests.post(COURIER_LOGIN_URL, data=payload)
 
         with allure.step('Проверяем код ответа 400'):
             assert response.status_code == 400
@@ -40,7 +40,7 @@ class TestCourierLogin:
     def test_login_without_password_field_returns_400(self):
         with allure.step('Отправляем запрос без поля password'):
             payload = {"login": generate_random_string(10)}
-            response = requests.post(f'{BASE_URL}/courier/login', data=payload)
+            response = requests.post(COURIER_LOGIN_URL, data=payload)
 
         with allure.step('Проверяем код ответа 400'):
             assert response.status_code == 400
@@ -49,7 +49,7 @@ class TestCourierLogin:
     def test_login_missing_field_returns_error_message(self):
         with allure.step('Отправляем запрос без поля login'):
             payload = {"password": generate_random_string(10)}
-            response = requests.post(f'{BASE_URL}/courier/login', data=payload)
+            response = requests.post(COURIER_LOGIN_URL, data=payload)
 
         with allure.step('Проверяем код ответа 400'):
             assert response.status_code == 400
