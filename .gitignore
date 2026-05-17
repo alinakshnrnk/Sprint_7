@@ -1,0 +1,11 @@
+# Кэш Python
+__pycache__/
+
+# Конфигурация VS Code
+.vscode/
+
+# Виртуальное окружение
+.venv/
+
+# Кэш pytest
+.pytest_cache/
